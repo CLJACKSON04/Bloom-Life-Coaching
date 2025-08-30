@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bloom Within — Flourish with Confidence</title>
+
+    <!--
+    DESIGN NOTES
+    - Audience: young, urban females
+    - Style: minimalist, airy spacing, confident typography
+    - Color system: charcoal/dark slate with rose accents & soft neutrals
+    - Layout: Flexbox & Grid for responsive sections
+  -->
+
+    <style>
+      /* -------------------------
+       CSS VARIABLES (THEME)
+    -------------------------- */
+      :root {
+        /* brand */
+        --bg: #0f172a; /* dark slate (text on light, or bg for CTA) */
+        --surface: #ffffff; /* cards/surfaces */
+        --muted: #f8fafc; /* page background */
+        --text: #111827; /* primary text */
+        --subtle: #6b7280; /* secondary text */
+        --accent: #e11d48; /* rose */
+        --accent-600: #be123c; /* darker rose (hover) */
+        --ring: rgba(225, 29, 72, 0.35);
+
+        /* layout */
+        --max-w: 1120px;
+        --radius: 14px;
+
+        /* type */
+        --title: clamp(1.75rem, 1rem + 3vw, 3rem);
+        --lead: clamp(1rem, 0.8rem + 0.8vw, 1.25rem);
+        --h2: clamp(1.35rem, 0.9rem + 1.6vw, 2rem);
+
+        /* spacing scale */
+        --space-1: 0.5rem;
+        --space-2: 0.75rem;
+        --space-3: 1rem;
+        --space-4: 1.5rem;
+        --space-5: 2rem;
+        --space-6: 3rem;
+        --space-8: 5rem;
+
+        /* shadows */
+        --shadow-sm: 0 8px 24px rgba(15, 23, 42, 0.08);
+        --shadow-md: 0 16px 40px rgba(15, 23, 42, 0.12);
+      }
+
+      /* -------------------------
+       RESET & BASE
+    -------------------------- */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      html:focus-within {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        color: var(--text);
+        background: var(--muted);
+        font: 400 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto,
+          "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+      img {
+        max-width: 100%;
+        display: block;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .container {
+        width: min(100% - 2rem, var(--max-w));
+        margin-inline: auto;
+      }
+
+      /* -------------------------
+       NAVIGATION (sticky)
+    -------------------------- */
+      .nav {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        backdrop-filter: saturate(180%) blur(10px);
+        background: color-mix(in oklab, white 85%, transparent);
+        border-bottom: 1px solid #e5e7eb;
+      }
+      .nav__bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-weight: 700;
+        letter-spacing: 0.2px;
+      }
+      /* Simple circular "logo" placeholder */
+      .logo {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 30% 30%,
+          #fda4af,
+          #fb7185 60%,
+          #e11d48
+        );
+        box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.6), var(--shadow-sm);
+      }
+      .nav__links {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      .nav__links a {
+        padding: 0.45rem 0.8rem;
+        border-radius: 999px;
+        font-weight: 600;
+        color: #374151;
+      }
+      .nav__links a:is(:hover, :focus-visible) {
+        background: #f3f4f6;
+        outline: none;
+      }
+      .nav__links a.active {
+        background: #fee2e2;
+        color: var(--accent);
+        box-shadow: inset 0 0 0 2px #fecdd3;
+      }
+      .nav__cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.55rem 1rem;
+        border-radius: 999px;
+        font-weight: 700;
+        background: linear-gradient(135deg, #fb7185, #e11d48);
+        color: white;
+        box-shadow: var(--shadow-sm);
+        transition: transform 0.2s ease, box-shadow 0.25s ease,
+          background 0.35s ease;
+      }
+      .nav__cta:focus-visible {
+        outline: 3px solid var(--ring);
+        outline-offset: 2px;
+      }
+      .nav__cta:is(:hover) {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
+        background: linear-gradient(135deg, #e11d48, #be123c);
+      }
+
+      /* -------------------------
+       GENERIC HERO SECTION WRAPPER
+    -------------------------- */
+      section.hero {
+        padding-block: clamp(3rem, 6vw, 8rem);
+      }
+      .hero__inner {
+        display: grid;
+        gap: var(--space-5);
+        grid-template-columns: 1.1fr 0.9fr;
+        align-items: center;
+      }
+      /* stack on small screens */
+      @media (max-width: 900px) {
+        .hero__inner {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .eyebrow {
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--accent);
+        font-size: 0.82rem;
+      }
+
+      .hero__title {
+        font-size: var(--title);
+        line-height: 1.15;
+        margin: 0.35rem 0 0.5rem;
+        letter-spacing: -0.02em;
+      }
+      .hero__lead {
+        font-size: var(--lead);
+        color: var(--subtle);
+        max-width: 58ch;
+      }
+      .hero__actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-top: var(--space-4);
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.9rem 1.2rem;
+        border-radius: 12px;
+        font-weight: 700;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: transform 0.18s ease, box-shadow 0.25s ease,
+          background 0.35s ease, border-color 0.25s ease;
+      }
+      .btn:focus-visible {
+        outline: 3px solid var(--ring);
+        outline-offset: 2px;
+      }
+
+      .btn--primary {
+        background: linear-gradient(135deg, #fb7185, #e11d48);
+        color: #fff;
+        box-shadow: var(--shadow-sm);
+      }
+      .btn--primary:is(:hover) {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
+        background: linear-gradient(135deg, #e11d48, #be123c);
+      }
+      .btn--ghost {
+        background: #fff;
+        border-color: #e5e7eb;
+        color: #374151;
+      }
+      .btn--ghost:is(:hover) {
+        border-color: #d1d5db;
+        box-shadow: var(--shadow-sm);
+      }
+
+      /* Placeholder visual blocks for imagery */
+      .visual {
+        aspect-ratio: 4 / 3;
+        border-radius: var(--radius);
+        background: linear-gradient(
+            135deg,
+            rgba(251, 113, 133, 0.12),
+            rgba(225, 29, 72, 0.18)
+          ),
+          repeating-linear-gradient(45deg, #ffffff 0 8px, #f3f4f6 8px 16px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #9ca3af;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid #eee;
+        text-transform: uppercase;
+      }
+
+      .brand .site-title {
+        font-weight: 800; /* 700–900 are valid; pick 800/900 */
+        font-size: 1.75rem; /* ≈ 28px on a 16px root; adjust as you like */
+        line-height: 1.1; /* keeps it tight next to the logo */
+        letter-spacing: -0.02em;
+        color: var(--accent);
+      }
+      /* -------------------------
+       HERO 1 (Personal life)
+    -------------------------- */
+      #personal {
+        background: conic-gradient(
+          from 180deg at 90% -10%,
+          #fff 0 20%,
+          #fee2e2 20% 40%,
+          #fff 40% 100%
+        );
+      }
+
+      /* -------------------------
+       HERO 2 (Career)
+    -------------------------- */
+      #career {
+        background: radial-gradient(
+            60rem 40rem at 110% -10%,
+            #ffe4e6 0%,
+            transparent 40%
+          ),
+          radial-gradient(50rem 30rem at -10% 0%, #f1f5f9 0%, transparent 30%);
+      }
+      .benefits {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(3, 1fr);
+        margin-top: var(--space-4);
+      }
+      .card {
+        background: var(--surface);
+        border-radius: 16px;
+        padding: 1.1rem 1.2rem;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid #eee;
+      }
+      .card h3 {
+        font-size: 1.05rem;
+        margin: 0.2rem 0 0.25rem;
+      }
+      .card p {
+        color: var(--subtle);
+        font-size: 0.98rem;
+        margin: 0;
+      }
+      .icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        display: grid;
+        place-items: center;
+        background: #fee2e2;
+        color: var(--accent);
+        font-weight: 800;
+      }
+      @media (max-width: 900px) {
+        .benefits {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* -------------------------
+       HERO 3 (CTA)
+    -------------------------- */
+      #cta {
+        color: #fff;
+        background: radial-gradient(
+            80rem 40rem at 10% -10%,
+            rgba(255, 255, 255, 0.08) 0%,
+            transparent 40%
+          ),
+          linear-gradient(160deg, #0f172a, #111827 55%, #0b1220);
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+      #cta .hero__lead {
+        color: rgba(255, 255, 255, 0.8);
+      }
+      #cta .btn--ghost {
+        background: transparent;
+        border-color: rgba(255, 255, 255, 0.2);
+        color: #fff;
+      }
+      #cta .btn--ghost:is(:hover) {
+        background: rgba(255, 255, 255, 0.06);
+        border-color: rgba(255, 255, 255, 0.35);
+      }
+
+      /* -------------------------
+       FOOTER
+    -------------------------- */
+      footer {
+        padding: var(--space-5) 0;
+        background: #0b1220;
+        color: #cbd5e1;
+      }
+      .footer__grid {
+        display: grid;
+        gap: 1.25rem;
+        grid-template-columns: 1.2fr 0.8fr 0.8fr;
+      }
+      .footer__brand {
+        color: #e5e7eb;
+      }
+      .social {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-top: 0.75rem;
+      }
+      .pill {
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #e5e7eb;
+        padding: 0.35rem 0.7rem;
+        border-radius: 999px;
+        font-weight: 600;
+      }
+      .pill:hover {
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      @media (max-width: 800px) {
+        .footer__grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* -------------------------
+       ACCESSIBILITY / MOTION
+    -------------------------- */
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          scroll-behavior: auto !important;
+        }
+        .btn,
+        .nav__cta {
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- ============= NAVIGATION ============= -->
+    <header class="nav" role="banner">
+      <div class="container nav__bar">
+        <a
+          href="#personal"
+          class="brand"
+          aria-label="Bloom Within — Flourish with Confidence"
+        >
+          <span class="logo" aria-hidden="true"></span>
+          <span class="site-title">Bloom Within</span>
+        </a>
+
+        <nav aria-label="Primary" class="nav__links">
+          <a href="#personal">Personal</a>
+          <a href="#career">Career</a>
+          <a href="#book">Book</a>
+          <a href="#cta">Work with Me</a>
+          <a class="nav__cta" href="#cta" aria-label="Book a free clarity call">
+            <!-- icon placeholder -->
+            <span aria-hidden="true">✦</span> Free Clarity Call
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <!-- ============= HERO SECTION 1: PERSONAL ============= -->
+      <section id="personal" class="hero" aria-labelledby="personal-title">
+        <div class="container hero__inner">
+          <div>
+            <div class="eyebrow">Personal • Relationships • Career</div>
+            <h1 class="hero__title" id="personal-title">
+              You’re not “too much.” You’re just ready.
+            </h1>
+            <p class="hero__lead">
+              If you’re juggling friendships, dating, and self-doubt, you’re not
+              alone. Together we’ll set boundaries, quiet the inner critic, and
+              build habits that make you feel grounded and confident.
+            </p>
+            <div class="hero__actions">
+              <a class="btn btn--primary" href="#cta">Start your reset</a>
+              <a
+                class="btn btn--ghost"
+                href="#career"
+                aria-label="Skip to career coaching section"
+                >Explore career wins</a
+              >
+            </div>
+          </div>
+
+          <!-- Placeholder image block -->
+          <div>
+            <img src="beachonrocks2.jpg" />
+          </div>
+        </div>
+      </section>
+
+      <!-- ============= HERO SECTION 2: CAREER ============= -->
+      <section id="career" class="hero" aria-labelledby="career-title">
+        <div class="container hero__inner">
+          <div>
+            <div class="eyebrow">Career • Growth • Clarity</div>
+            <h2 class="hero__title" id="career-title">
+              Imposter syndrome isn’t a personality trait.
+            </h2>
+            <p class="hero__lead">
+              Burnout, comparison, the “I just got lucky” spiral—let’s replace
+              them with a clear plan, aligned goals, and a voice you trust in
+              rooms that matter.
+            </p>
+
+            <!-- Three benefit cards addressing pain points -->
+            <div class="benefits" role="list">
+              <article class="card" role="listitem">
+                <div class="icon" aria-hidden="true">A</div>
+                <h3>Own your narrative</h3>
+                <p>
+                  Reframe imposter thoughts with evidence-based tools and weekly
+                  micro-wins.
+                </p>
+              </article>
+              <article class="card" role="listitem">
+                <div class="icon" aria-hidden="true">B</div>
+                <h3>Design anti-burnout weeks</h3>
+                <p>
+                  Audit energy drains and build a realistic schedule you’ll
+                  actually follow.
+                </p>
+              </article>
+              <article class="card" role="listitem">
+                <div class="icon" aria-hidden="true">C</div>
+                <h3>Communicate with ease</h3>
+                <p>
+                  Scripts for feedback, salary talks, and boundary setting—no
+                  more over-explaining.
+                </p>
+              </article>
+            </div>
+
+            <div class="hero__actions">
+              <a class="btn btn--primary" href="#cta">See coaching packages</a>
+              <a class="btn btn--ghost" href="#personal"
+                >Back to personal growth</a
+              >
+            </div>
+          </div>
+
+          <!-- Placeholder image block -->
+          <div
+            class="visual"
+            role="img"
+            aria-label="Placeholder image — modern workspace"
+          >
+            <img src="Meditation Pic.avif" />
+          </div>
+        </div>
+      </section>
+
+      <!-- ============= HERO SECTION 3: CTA ============= -->
+      <section id="cta" class="hero" aria-labelledby="cta-title">
+        <div class="container hero__inner">
+          <div>
+            <div class="eyebrow" style="color: #fecdd3">Next step</div>
+            <h2 class="hero__title" id="cta-title">
+              Let’s map your next 90 days.
+            </h2>
+            <p class="hero__lead">
+              Book a free 20-minute clarity call. We’ll diagnose your top
+              roadblocks and outline a simple, energizing plan—zero fluff.
+            </p>
+            <div class="hero__actions">
+              <button
+                class="btn btn--primary"
+                type="button"
+                aria-label="Open booking (placeholder)"
+              >
+                Book your free call
+              </button>
+              <button
+                class="btn btn--ghost"
+                type="button"
+                aria-label="Download services guide (placeholder)"
+              >
+                Download services guide
+              </button>
+            </div>
+          </div>
+
+          <!-- Placeholder image block -->
+          <div>
+            <img src="horsebackriding.jpg" />
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ============= FOOTER ============= -->
+    <footer role="contentinfo">
+      <div class="container footer__grid">
+        <div>
+          <div class="brand footer__brand">
+            <span class="logo" aria-hidden="true"></span>
+            <strong>Bloom Within</strong>
+          </div>
+          <p style="margin: 0.75rem 0 0; max-width: 50ch">
+            Evidence-based coaching for women building bold lives in the city.
+          </p>
+          <div class="social" aria-label="Social links (placeholders)">
+            <a class="pill" href="#" onclick="event.preventDefault();"
+              >Instagram</a
+            >
+            <a class="pill" href="#" onclick="event.preventDefault();"
+              >TikTok</a
+            >
+            <a class="pill" href="#" onclick="event.preventDefault();"
+              >LinkedIn</a
+            >
+            <a class="pill" href="#" onclick="event.preventDefault();"
+              >YouTube</a
+            >
+          </div>
+        </div>
+
+        <div>
+          <h4 style="margin: 0.2rem 0 0.5rem">Contact</h4>
+          <p style="margin: 0">hello@bloomwithin.com</p>
+          <p style="margin: 0.2rem 0 0">(555) 555-0123</p>
+          <p style="margin: 0.2rem 0 0">
+            123 Market St, Suite 8B<br />Boston, MA
+          </p>
+        </div>
+
+        <div>
+          <h4 style="margin: 0.2rem 0 0.5rem">Explore</h4>
+          <nav aria-label="Footer">
+            <p style="margin: 0.2rem 0">
+              <a href="#personal">Personal Coaching</a>
+            </p>
+            <p style="margin: 0.2rem 0">
+              <a href="#career">Career Coaching</a>
+            </p>
+            <p style="margin: 0.2rem 0">
+              <a href="#book">Book</a>
+            </p>
+            <p style="margin: 0.2rem 0"><a href="#cta">Work with Me</a></p>
+          </nav>
+        </div>
+      </div>
+
+      <div
+        class="container"
+        style="
+          margin-top: 1.25rem;
+          border-top: 1px solid rgba(255, 255, 255, 0.1);
+          padding-top: 1rem;
+          display: flex;
+          justify-content: space-between;
+          gap: 1rem;
+          flex-wrap: wrap;
+        "
+      >
+        <small
+          >© <span id="year"></span> Bloom Within Coaching. All rights
+          reserved.</small
+        >
+        <small
+          ><a href="#" onclick="event.preventDefault();">Privacy</a> •
+          <a href="#" onclick="event.preventDefault();">Terms</a></small
+        >
+      </div>
+    </footer>
+
+    <!-- ============= JS: Smooth scroll, active-link highlight, minor helpers ============= -->
+    <script>
+      // Update year in footer
+      document.getElementById("year").textContent = new Date().getFullYear();
+
+      // Smooth scroll for internal links (basic enhancement; browsers already support smooth via CSS)
+      document.querySelectorAll('a[href^="#"]').forEach((a) => {
+        a.addEventListener("click", (e) => {
+          const id = a.getAttribute("href");
+          if (id.length > 1) {
+            const el = document.querySelector(id);
+            if (el) {
+              e.preventDefault();
+              el.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+          }
+        });
+      });
+
+      // IntersectionObserver to highlight the active nav link based on section in view
+      const navLinks = [
+        ...document.querySelectorAll('.nav__links a[href^="#"]:not(.nav__cta)'),
+      ];
+      const sectionById = Object.fromEntries(
+        navLinks.map((link) => {
+          const id = link.getAttribute("href");
+          return [id, document.querySelector(id)];
+        })
+      );
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const id = "#" + entry.target.id;
+            const link = navLinks.find((l) => l.getAttribute("href") === id);
+            if (link) {
+              if (entry.isIntersecting) {
+                navLinks.forEach((l) => l.classList.remove("active"));
+                link.classList.add("active");
+              }
+            }
+          });
+        },
+        { threshold: 0.5 }
+      );
+
+      Object.values(sectionById).forEach((sec) => sec && observer.observe(sec));
+    </script>
+  </body>
+</html>
